@@ -31,6 +31,9 @@ with st.sidebar:
     if openai_api_key:  # Check if the input is not empty
         os.environ["OPENAI_API_KEY"] = openai_api_key  # Set the environment variable
 
+    # Initialize conversation history
+    conversation_history = []
+
 # Main function
 def main():
     
@@ -41,8 +44,7 @@ def main():
     if embeddings is None:
         st.stop()
 
-    # Initialize conversation history
-    conversation_history = []
+    global conversation_history  # Access the global conversation history variable
 
     # Allow users to ask questions
     question = st.text_input("Ask a question:")
