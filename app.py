@@ -41,18 +41,30 @@ def main():
     if embeddings is None:
         st.stop()
 
+    # Initialize conversation history
+    conversation_history = []
+
     # Allow users to ask questions
     question = st.text_input("Ask a question:")
     if st.button("Submit"):
         if question:
+            # Append user question to conversation history
+            conversation_history.append(("You:", question))
+            
             # Process user question using the embeddings and provide a response
-            # response = process_question(question, embeddings)
             # get the docs related to the question
             docs = retrieve_docs(question, embeddings)
             response = generate_response(docs, question)
-            st.write("Response:", response)
+            
+            # Append chatbot response to conversation history
+            conversation_history.append(("Chatbot:", response))
+
+            # Display conversation history and response
+            for speaker, utterance in conversation_history:
+                st.write(f"{speaker} {utterance}")
         else:
             st.warning("Please enter a question.")
+
 
 def retrieve_docs(question, embeddings):
     docs = embeddings.similarity_search(question, k=3)
