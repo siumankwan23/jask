@@ -2,7 +2,7 @@
 import streamlit as st
 from dotenv import load_dotenv
 import pickle
-from pypdf import PdfReader
+                           
 from streamlit_extras.add_vertical_space import add_vertical_space
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
@@ -36,24 +36,46 @@ def main():
     
     st.title("Embedding Loader and Question Answering")
     
-    # Load embeddings
-    embeddings = get_embeddings()
-    if embeddings is None:
-        st.stop()
+    # Initialize session state to store conversation history
+    if 'conversation' not in st.session_state:
+        st.session_state.conversation = []
+                 
 
     # Allow users to ask questions
     question = st.text_input("Ask a question:")
     if st.button("Submit"):
         if question:
-            # Process user question using the embeddings and provide a response
-            # response = process_question(question, embeddings)
-            # get the docs related to the question
-            docs = retrieve_docs(question, embeddings)
-            response = generate_response(docs, question)
-            st.write("Response:", response)
+            # Process user question and generate response
+            response = process_question(question)
+            # Append question and response to conversation history
+            st.session_state.conversation.append({'question': question, 'response': response})
+                                                        
+                                           
         else:
             st.warning("Please enter a question.")
+    
+    # Display conversation history
+    st.subheader("Conversation History")
+    for entry in st.session_state.conversation:
+        st.write(f"**User:** {entry['question']}")
+        st.write(f"**Bot:** {entry['response']}")
+        st.write("---")
 
+# Function to generate response to user's question
+def process_question(question):
+    embeddings = get_embeddings()
+    if embeddings is None:
+        return "Error: Embeddings not loaded."
+    
+    # Retrieve relevant documents
+    docs = retrieve_docs(question, embeddings)
+    
+    # Generate response using LangChain
+    response = generate_response(docs, question)
+    
+    return response
+
+# Function to retrieve relevant documents
 def retrieve_docs(question, embeddings):
     docs = embeddings.similarity_search(question, k=3)
     if len(docs) == 0:
@@ -61,6 +83,7 @@ def retrieve_docs(question, embeddings):
     else:
         return docs
 
+# Function to generate response
 def generate_response(docs, question):
     llm = ChatOpenAI(temperature=0.0, max_tokens=1000, model_name="gpt-3.5-turbo")
     chain = load_qa_chain(llm=llm, chain_type="stuff")
@@ -69,31 +92,32 @@ def generate_response(docs, question):
         print(cb)
     return response
 
-# Function to process user question and provide a response
-def process_question(question, embeddings):
-    # Perform necessary operations with embeddings to generate a response
-    # Example: Find similar embeddosings, use a pre-trained model, etc.
-    # For demonstration purposes, let's just return a dummy response
-    return "This is a dummy response to the question: '{}'".format(question)
+                                                          
+                                           
+                                                                         
+                                                                       
+                                                                    
+                                                                            
 
 # Function to get embeddings
 def get_embeddings():
-    root_dir = os.path.dirname(__file__)
-    embeddings_paths = "/mount/src/justask/s.pkl"
-    embeddings_path = os.path.join(root_dir, "s.pkl")
-    #embeddings_paths = os.path.join(root_dir, "c.jpg")
-    #st.image('c.jpg', caption='Sunrise by the mountains')
-    st.write(embeddings_paths)
-    st.write(embeddings_path)
+    # Update with your path to embeddings file
+                                                 
+                                                     
+                                                       
+                                                          
+                              
+                             
 
-    #embeddings_path = "s_embeddings.pkl"  # Path to your embeddings file
+    embeddings_path = "s.pkl"  
+    
     if os.path.exists(embeddings_path):
         embeddings = load_embeddings(embeddings_path)
-        st.write("Embeddings loaded successfully!")
+                          
         return embeddings
     else:
         st.error("Embeddings file not found!")
-        st.write(embeddings_path)
+                                 
         return None
 
 # Function to load embeddings from a pickle file
