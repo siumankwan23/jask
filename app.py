@@ -31,9 +31,6 @@ with st.sidebar:
     if openai_api_key:  # Check if the input is not empty
         os.environ["OPENAI_API_KEY"] = openai_api_key  # Set the environment variable
 
-    # Initialize conversation history
-    conversation_history = []
-
 # Main function
 def main():
     
@@ -44,29 +41,18 @@ def main():
     if embeddings is None:
         st.stop()
 
-    global conversation_history  # Access the global conversation history variable
-
     # Allow users to ask questions
     question = st.text_input("Ask a question:")
     if st.button("Submit"):
         if question:
-            # Append user question to conversation history
-            conversation_history.append(("You:", question))
-            
             # Process user question using the embeddings and provide a response
+            # response = process_question(question, embeddings)
             # get the docs related to the question
             docs = retrieve_docs(question, embeddings)
             response = generate_response(docs, question)
-            
-            # Append chatbot response to conversation history
-            conversation_history.append(("Chatbot:", response))
-
-            # Display conversation history and response
-            for speaker, utterance in conversation_history:
-                st.write(f"{speaker} {utterance}")
+            st.write("Response:", response)
         else:
             st.warning("Please enter a question.")
-
 
 def retrieve_docs(question, embeddings):
     docs = embeddings.similarity_search(question, k=3)
@@ -93,7 +79,14 @@ def process_question(question, embeddings):
 # Function to get embeddings
 def get_embeddings():
     root_dir = os.path.dirname(__file__)
+    embeddings_paths = "/mount/src/justask/s.pkl"
     embeddings_path = os.path.join(root_dir, "s.pkl")
+    #embeddings_paths = os.path.join(root_dir, "c.jpg")
+    #st.image('c.jpg', caption='Sunrise by the mountains')
+    st.write(embeddings_paths)
+    st.write(embeddings_path)
+
+    #embeddings_path = "s_embeddings.pkl"  # Path to your embeddings file
     if os.path.exists(embeddings_path):
         embeddings = load_embeddings(embeddings_path)
         st.write("Embeddings loaded successfully!")
