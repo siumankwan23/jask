@@ -102,18 +102,11 @@ def generate_response(docs, question):
 # Function to get embeddings
 def get_embeddings():
     # Update with your path to embeddings file
-                                                 
-                                                     
-                                                       
-                                                          
-                              
-                             
-
     embeddings_path = "s.pkl"  
     
     if os.path.exists(embeddings_path):
         embeddings = load_embeddings(embeddings_path)
-                          
+                         
         return embeddings
     else:
         st.error("Embeddings file not found!")
