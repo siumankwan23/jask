@@ -48,9 +48,8 @@ def main():
             # Process user question and generate response
             response = process_question(question)
             # Append question and response to conversation history
-            st.session_state.conversation.append({'question': question, 'response': response})
-                                                        
-                                           
+            st.session_state.conversation.append({'question': question, 'response': response})                                            
+                                
         else:
             st.warning("Please enter a question.")
     
@@ -60,7 +59,7 @@ def main():
         st.write(f"**User:** {entry['question']}")
         st.write(f"**Bot:** {entry['response']}")
         st.write("---")
-
+        
 # Function to generate response to user's question
 def process_question(question):
     embeddings = get_embeddings()
